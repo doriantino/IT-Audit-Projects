@@ -129,7 +129,7 @@ Constat : Sur plus de 4 millions de transactions :
 - Impact Audit (MAJEUR !) : Étant donné qu'il y a 3 397 fraudes avérées (isFraud=1), cela signifie que le système de détection de la banque a manqué la quasi-totalité des vraies fraudes. C'est un taux de Faux Négatifs (fraudes non détectées) extrêmement élevé.
 - Conclusion Initiale : Le système de détection de fraude de BankSecur est largement inefficace tel qu'il est configuré dans cette simulation. C'est l'observation la plus importante de notre analyse exploratoire et le point focal de notre audit.
 
-# IV Analyse des Cohérences des Soldes (Balance_Diff_Org et Balance_Diff_Dest) :
+# IV. Analyse des Cohérences des Soldes (Balance_Diff_Org et Balance_Diff_Dest) :
 Les observations sur Balance_Diff_Org ([oldbalanceOrg]-[amount]-[newbalanceOrig]) et Balance_Diff_Dest([newbalanceDest]-([oldbalanceDest] + [amount])) sont extrêmement critiques et doivent figurer en bonne place dans votre rapport d'audit :
 
 ## Fiabilité des Données Compromise : 
@@ -142,3 +142,30 @@ Ces incohérences peuvent entraîner :
 - Des sanctions réglementaires (si les rapports financiers sont basés sur des données non fiables).
 ## Indicateur de Fraude Potentiel : 
 Il est fortement probable que ces incohérences de solde soient utilisées ou générées par les mécanismes de fraude. Les fraudeurs pourraient exploiter ces failles pour manipuler les soldes, ou la fraude elle-même pourrait laisser ces "cicatrices" dans les calculs de solde. C'est un puissant levier d'investigation pour votre audit.
+
+
+# V. Performance du Système de Détection de Fraude de BankSecur : Une Évaluation Critique
+
+Basé sur votre analyse, la matrice de confusion pour le système actuel (isFlaggedFraud vs isFraud) est la suivante :
+
+- Vrais Positifs (VP) : 14
+C'est le nombre de fois où le système a correctement identifié une transaction comme étant une fraude.
+- Faux Négatifs (FN) : 8 197
+C'est le nombre de fois où le système a manqué une transaction qui était en réalité une fraude. Ces fraudes sont passées sous le radar.
+- Faux Positifs (FP) : 0
+C'est le nombre de fois où le système a incorrectement signalé une transaction non frauduleuse comme étant une fraude.
+- Vrais Négatifs (VN) : 6 354 407
+C'est le nombre de fois où le système a correctement identifié une transaction comme n'étant pas une fraude.
+
+## Interprétation d'Auditeur : Le Verdict
+Ces chiffres sont, du point de vue de l'audit, extrêmement préoccupants :
+
+### Efficacité Catastrophique de la Détection (Faux Négatifs) :
+Avec seulement 14 fraudes détectées (VP) sur un total de 8 211 vraies fraudes (14 VP + 8197 FN), le système actuel manque 8 197 fraudes. Cela représente un taux de détection de seulement (14 / 8211) * 100 = 0.17%. Autrement dit, le système ne détecte même pas 1% des fraudes réelles !
+C'est une faille opérationnelle majeure. Chaque transaction frauduleuse manquée représente une perte financière potentielle pour la banque. Le risque est immense.
+
+### Absence de Faux Positifs :
+Le fait qu'il y ait 0 Faux Positif (FP = 0) signifie que le système ne génère aucun "faux signal". Si cela semble positif à première vue, c'est en fait le symptôme du problème : le système est tellement restrictif qu'il ne signale presque rien, et par conséquent, il ne rate presque rien (de non-fraude) mais ne détecte presque rien (de fraude) non plus. C'est un système "silencieux" parce qu'il ne fait pratiquement rien.
+
+### Performance Inacceptable :
+Le système de BankSecur, tel que simulé, est largement inefficace pour protéger l'organisation contre la fraude. Il offre une fausse impression de sécurité.
