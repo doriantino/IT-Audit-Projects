@@ -179,3 +179,5 @@ Ce chiffre est le clou du spectacle de votre audit sur la détection de fraude. 
 - Pertes Potentielles Massives : Près de 12 milliards d'euros (si l'on considère la devise comme l'euro) de transactions frauduleuses sont passées complètement inaperçues. C'est une somme absolument astronomique pour n'importe quelle institution financière.
 - Faible Protection Financière : Cela confirme de manière très concrète que le système anti-fraude actuel n'offre aucune protection significative contre les pertes financières dues à la fraude.
 - Urgence d'Action : Ce montant met en lumière l'urgence absolue pour la banque de revoir, améliorer ou même remplacer intégralement son système de détection de fraude. L'inaction face à de tels chiffres entraînerait des risques financiers et de réputation inacceptables.
+
+
