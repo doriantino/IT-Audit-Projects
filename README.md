@@ -128,3 +128,17 @@ Constat : Sur plus de 4 millions de transactions :
 - Constat : Le système de détection de fraude simulé de la banque (isFlaggedFraud) n'a signalé que 3 transactions comme potentiellement frauduleuses sur l'ensemble du dataset.
 - Impact Audit (MAJEUR !) : Étant donné qu'il y a 3 397 fraudes avérées (isFraud=1), cela signifie que le système de détection de la banque a manqué la quasi-totalité des vraies fraudes. C'est un taux de Faux Négatifs (fraudes non détectées) extrêmement élevé.
 - Conclusion Initiale : Le système de détection de fraude de BankSecur est largement inefficace tel qu'il est configuré dans cette simulation. C'est l'observation la plus importante de notre analyse exploratoire et le point focal de notre audit.
+
+# IV Analyse des Cohérences des Soldes (Balance_Diff_Org et Balance_Diff_Dest) :
+Les observations sur Balance_Diff_Org ([oldbalanceOrg]-[amount]-[newbalanceOrig]) et Balance_Diff_Dest([newbalanceDest]-([oldbalanceDest] + [amount])) sont extrêmement critiques et doivent figurer en bonne place dans votre rapport d'audit :
+
+## Fiabilité des Données Compromise : 
+Une majorité écrasante des transactions (environ 85% pour l'origine et 75% pour la destination) présentent des incohérences majeures dans les mises à jour de soldes. Cela indique des failles profondes dans la logique applicative ou la gestion des données des systèmes bancaires. Les soldes affichés aux clients et utilisés pour les rapports internes pourraient être massivement incorrects.
+## Risque Opérationnel et Financier Élevé : 
+Ces incohérences peuvent entraîner :
+- Des erreurs comptables significatives.
+- Des pertes financières non détectées (si l'argent "disparaît" via des soldes inférieurs aux attentes).
+- Des problèmes de confiance client (en cas de relevés de compte incorrects).
+- Des sanctions réglementaires (si les rapports financiers sont basés sur des données non fiables).
+## Indicateur de Fraude Potentiel : 
+Il est fortement probable que ces incohérences de solde soient utilisées ou générées par les mécanismes de fraude. Les fraudeurs pourraient exploiter ces failles pour manipuler les soldes, ou la fraude elle-même pourrait laisser ces "cicatrices" dans les calculs de solde. C'est un puissant levier d'investigation pour votre audit.
