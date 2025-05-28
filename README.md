@@ -88,3 +88,43 @@ amount of the transaction in local currency.
 - newbalanceDest - new balance recipient after the transaction. Note that there is not information for customers that start with M (Merchants).
 - isFraud - This is the transactions made by the fraudulent agents inside the simulation. In this specific dataset the fraudulent behavior of the agents aims to profit by taking control or customers accounts and try to empty the funds by transferring to another account and then cashing out of the system.
 - isFlaggedFraud - The business model aims to control massive transfers from one account to another and flags illegal attempts. An illegal attempt in this dataset is an attempt to transfer more than 200.000 in a single transaction.
+
+
+
+# I. Observations Générales sur la Qualité des Données
+
+## Problème Majeur de Types de Données (V_String partout) :
+- Constat : Toutes les colonnes qui devraient être numériques (step, amount, oldbalanceOrg, newbalanceOrg, oldbalanceDest, newbalanceDest, isFraud, isFlaggedFraud) ont été importées par Alteryx comme des chaînes de caractères (V_String).
+- Impact Audit : Cela rendait impossible toute opération numérique directe (calculs, filtrages par valeur, agrégations statistiques). C'est une faiblesse critique d'un point de vue de la qualité des données, qui aurait dû être corrigée en amont si ces données provenaient directement d'un système bancaire.
+- Action Corrective : Nécessité absolue de convertir ces colonnes en types numériques appropriés (Double pour les montants/soldes, Byte pour les indicateurs 0/1) via l'outil Select, suivi d'un nettoyage (Data Cleansing) pour gérer les Nulls et les espaces parasites.
+
+## Absence de Valeurs Manquantes Importantes :
+- Constat : Pour toutes les colonnes examinées (amount, soldes, isFraud, isFlaggedFraud), aucune valeur Null ou vide n'a été détectée.
+- Impact Audit : C'est un point positif. Cela simplifie la phase de nettoyage et suggère une certaine complétude des enregistrements de transactions.
+
+# II. Observations Spécifiques sur les Données Financières
+
+## Présence de Montants et Soldes Extrêmement Élevés :
+- Constat : Les colonnes amount, oldbalanceOrg, newbalanceOrg, oldbalanceDest, newbalanceDest contiennent des valeurs qui, une fois converties en numérique, atteignent des dizaines de millions (ex: 1.46E8 pour oldbalanceDest = 146 millions).
+- Impact Audit : Dans un contexte bancaire, ces transactions à très gros montants sont des points de risque élevés pour la fraude (notamment le blanchiment d'argent) et nécessitent des - contrôles internes et des validations spécifiques (par exemple, des limites transactionnelles, des validations manuelles pour les montants au-delà d'un certain seuil). L'efficacité des contrôles doit être testée pour ces transactions.
+
+## Fréquence Élevée des Soldes à Zéro :
+- Constat : Les valeurs 0.0 sont extrêmement fréquentes dans les colonnes oldbalanceOrg (plus de 1.3 millions) et newbalanceOrg (plus de 2.2 millions), ainsi que dans oldbalanceDest (plus de 1.7 millions) et newbalanceDest (plus de 1.5 million).
+- Impact Audit : Un nombre aussi élevé de soldes à zéro (avant ou après transaction) peut être un indicateur de comportements anormaux ou frauduleux :
+-- Comptes frauduleusement vidés (cash-out).
+-- Comptes "mules" utilisés temporairement pour recevoir/transférer des fonds avant d'être vidés.
+-- Tentatives de transactions sur des comptes sans fonds.
+C'est une caractéristique des données qu'il faudra corréler avec la présence de fraude (isFraud=1) pour voir si ces transactions sont plus risquées.
+
+# III. Observations Critiques sur la Détection de Fraude (Le "Red Flag" Principal)
+
+## Déséquilibre Extrême des Classes (isFraud) :
+Constat : Sur plus de 4 millions de transactions :
+- Seulement 3 397 sont des fraudes avérées (isFraud = 1).
+- 4 057 077 sont des non-fraudes (isFraud = 0).
+- Impact Audit : C'est un dataset très déséquilibré. Cela rend la détection de fraude intrinsèquement difficile. Un système qui ne ferait rien du tout aurait une précision (exactitude) de 99.9% mais serait totalement inefficace pour détecter la fraude.
+
+## Performance Alarmante du Système de Détection Actuel (isFlaggedFraud) :
+- Constat : Le système de détection de fraude simulé de la banque (isFlaggedFraud) n'a signalé que 3 transactions comme potentiellement frauduleuses sur l'ensemble du dataset.
+- Impact Audit (MAJEUR !) : Étant donné qu'il y a 3 397 fraudes avérées (isFraud=1), cela signifie que le système de détection de la banque a manqué la quasi-totalité des vraies fraudes. C'est un taux de Faux Négatifs (fraudes non détectées) extrêmement élevé.
+- Conclusion Initiale : Le système de détection de fraude de BankSecur est largement inefficace tel qu'il est configuré dans cette simulation. C'est l'observation la plus importante de notre analyse exploratoire et le point focal de notre audit.
