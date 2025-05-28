@@ -169,3 +169,13 @@ Le fait qu'il y ait 0 Faux Positif (FP = 0) signifie que le système ne génère
 
 ### Performance Inacceptable :
 Le système de BankSecur, tel que simulé, est largement inefficace pour protéger l'organisation contre la fraude. Il offre une fausse impression de sécurité.
+
+# VI. Impact Financier des Fraudes Manquées par le Système de BankSecur
+Le montant calculé est : 11 978 629 864,15 (onze milliards, neuf cent soixante-dix-huit millions, six cent vingt-neuf mille, huit cent soixante-quatre et quinze centimes).
+
+## Le Verdict Financier de l'Auditeur
+Ce chiffre est le clou du spectacle de votre audit sur la détection de fraude. Il montre que le système de BankSecur ne détecte pas seulement un grand nombre de fraudes, mais qu'il rate aussi des montants colossaux.
+
+- Pertes Potentielles Massives : Près de 12 milliards d'euros (si l'on considère la devise comme l'euro) de transactions frauduleuses sont passées complètement inaperçues. C'est une somme absolument astronomique pour n'importe quelle institution financière.
+- Faible Protection Financière : Cela confirme de manière très concrète que le système anti-fraude actuel n'offre aucune protection significative contre les pertes financières dues à la fraude.
+- Urgence d'Action : Ce montant met en lumière l'urgence absolue pour la banque de revoir, améliorer ou même remplacer intégralement son système de détection de fraude. L'inaction face à de tels chiffres entraînerait des risques financiers et de réputation inacceptables.
